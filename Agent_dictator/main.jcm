@@ -1,0 +1,29 @@
+mas smart_room_environment {
+
+    agent dictator {
+        beliefs:sign_position("basic_red", 1000000, 1000000)
+                sign_position("basic_green", 1000000, 1000000)
+                sign_position("two_strips", 1000000, 1000000)
+                // sign_position("basic_white", 1000000, 1000000)
+                // sign_position("three_strips", 1000000, 1000000)
+                // sign_position("green_red", 1000000, 1000000)
+                // sign_position("red_green", 1000000, 1000000)
+                // sign_position("one_strip", 1000000, 1000000)
+
+                sign_position("green_red",-1.480449996205453,1.6363265051867928) //default position for our exemple
+                sign_position("three_strips",-1.0975677152739625,1.2613738506826613)
+                sign_position("red_green",-1.2961516694920328,0.5298066867633119)
+                sign_position("basic_white",-0.5961584613531428,0.9950173993976814)
+                sign_position("one_strip",-0.5624102292374539,-0.0025097031265698677)
+
+        goals: start
+        join: ros_workspace
+        focus: ros_workspace.h
+    }
+
+
+    workspace ros_workspace  {
+        artifact h: org.hypermedea.HypermedeaArtifact()
+        artifact orc: OrientationConverter()
+    }
+}

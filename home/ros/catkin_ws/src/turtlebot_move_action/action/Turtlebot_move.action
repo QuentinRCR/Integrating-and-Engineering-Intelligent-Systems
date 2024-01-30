@@ -1,0 +1,10 @@
+#goal definition
+float32 distance
+string direction
+---
+#result definition
+float32 final_distance
+string status
+---
+#feedback
+float32[] step_distance

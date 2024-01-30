@@ -1,0 +1,219 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <http://example.org/> .
+@prefix schema: <http://schema.org/> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix sf: <http://www.opengis.net/ont/sf#> .
+@prefix wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix po: <http://www.productontology.org/id/> .
+@prefix ros: <https://github.com/RobotWebTools/rosbridge_suite/blob/ros1/ROSBRIDGE_PROTOCOL.md#> .
+
+# Sign types: basic_red, basic_green, basic_white, three_strips, green_red, red_green, one_strip, two_strips
+
+<rosConfig> # ROS topics and messages
+  a ex:ROSConfig ;
+  ex:seedUri "ros+ws://172.16.1.105:9090" ;
+  ex:seedForm "https://github.com/RobotWebTools/rosbridge_suite/blob/ros1/ROSBRIDGE_PROTOCOL.md#messageType" ;
+  ex:topics [
+    a schema:MoveAction ;
+    schema:name "Move Action Goal" ;
+    schema:entryPoint "/move_action" ;
+    ros:messageType "/move_action/Turtlebot_moveActionGoal"
+  ], [
+    a schema:MoveAction ;
+    schema:name "SLAM Action" ;
+    schema:entryPoint "/move_base" ;
+    ros:messageType "/move_base_msgs/MoveBaseActionGoal"
+  ], [
+    a schema:MoveAction ;
+    schema:name "SLAM Action Goal" ;
+    schema:entryPoint "/move_base/goal" ;
+    ros:messageType "/move_base_msgs/MoveBaseActionGoal"
+  ], [
+    a schema:SubscribeAction ;
+    schema:name "SLAM Action Result" ;
+    schema:entryPoint "/move_base/result" ;
+    ros:messageType "/move_base_msgs/MoveBaseActionResult"
+  ], [
+    a schema:RegisterAction ;
+    schema:name "Audio Generation" ;
+    schema:entryPoint "/speech" ;
+    ros:messageType "/std_msgs/String"
+  ], [
+    a schema:RegisterAction ;
+    schema:name "Arm Control" ;
+    schema:entryPoint "/cmd_arm" ;
+    ros:messageType "/std_msgs/String"
+  ], [
+    a schema:SubscribeAction ;
+    schema:name "Command Detection" ;
+    schema:entryPoint "/audio_command" ;
+    ros:messageType "/project/command"
+  ], [
+    a schema:SubscribeAction ;
+    schema:name "Obstacle Detection" ;
+    schema:entryPoint "/obstacles" ;
+    ros:messageType "/std_msgs/String"
+  ], [
+    a schema:SubscribeAction ;
+    schema:name "Sign Detection" ;
+    schema:entryPoint "/sign" ;
+    ros:messageType "/project/sign_info"
+  ], [
+    a schema:SubscribeAction ;
+    schema:name "Position Detection" ;
+    schema:entryPoint "/amcl_pose" ;
+    ros:messageType "/geometry_msgs/PoseWithCovarianceStamped"
+  ]
+.
+
+<config> # Config
+  a ex:Config ;
+  ex:traffic [
+    a ex:TrafficConfig ;
+    ex:redLight "basic_red" ;
+    ex:greenLight "basic_green" ;
+    ex:distanceThreshold 0.5
+  ] ;
+  ex:workstations [
+    a ex:Workbench ;
+    ex:sign "basic_white" ;
+  ], [
+    a ex:Packaging ;
+    ex:sign "one_strip" ;
+  ], [
+    a ex:ItemStorage ;
+    ex:material 1 ;
+    ex:sign "green_red"
+  ], [
+    a ex:ItemStorage ;
+    ex:material 2 ;
+    ex:sign "red_green"
+  ], [
+    a ex:ItemStorage ;
+    ex:material 3 ;
+    ex:sign "three_strips"
+  ] .
+
+<sampleRecipe1> # Sample recipe
+  a ex:Recipe ;
+  ex:result 10 ;
+  ex:ingredients [
+    a ex:Ingredient ;
+    ex:material 1 ;
+    ex:amount 1
+  ] ,[
+    a ex:Ingredient ;
+    ex:material 3 ;
+    ex:amount 2 ;
+  ] .
+
+<sampleRecipe2> # Sample recipe
+  a ex:Recipe ;
+  ex:result 11 ;
+  ex:ingredients [
+    a ex:Ingredient ;
+    ex:material 1 ;
+    ex:amount 1
+  ], [
+    a ex:Ingredient ;
+    ex:material 2 ;
+    ex:amount 2
+  ] .
+
+<sampleRecipe3> # Sample recipe
+  a ex:Recipe ;
+  ex:result 12 ;
+  ex:ingredients [
+    a ex:Ingredient ;
+    ex:material 2 ;
+    ex:amount 1
+  ] .
+
+
+# Environment Description
+
+<maqit>
+  a schema:Place, geo:Feature ;
+  geo:sfContains <factory>, <city> .
+
+<factory>
+  a schema:Place, geo:Feature ;
+  geo:sfContains <storageRack1>, <storageRack1> .
+
+<storageRack1>
+  a schema:Place, geo:Feature ;
+  geo:hasBoundingBox [
+    a sf:Envelope ;
+    sf:minimum [
+      wgs:lat 45.427860 ;
+      wgs:long 4.403750 ;
+      wgs:alt 562
+    ] ;
+    sf:maximum [
+      wgs:lat 45.227865 ;
+      wgs:long 4.403755 ;
+      wgs:alt 562
+    ]
+  ] .
+
+<storageRack2>
+  a schema:Place, geo:Feature ;
+  geo:hasBoundingBox [
+    a sf:Envelope ;
+    sf:minimum [
+      wgs:lat 45.227875 ;
+      wgs:long 4.403765 ;
+      wgs:alt 562
+    ] ;
+    sf:maximum [
+      wgs:lat 45.227880 ;
+      wgs:long 4.403770 ;
+      wgs:alt 562
+    ]
+  ] .
+
+<conveyor>
+  a po:Conveyor .
+
+<city>
+  a schema:Place, geo:Feature .
+
+# Robot Information
+
+# TODO correct topics and messages
+<happy>
+  a po:Mobile_robot ;
+  schema:potentialAction [
+    a schema:SubscribeAction ;
+    schema:entryPoint "ros+ws://172.16.1.108:9090/odom"^^xsd:anyURI ;
+    ros:messageType "nav_msgs/Odometry"
+  ], [
+    a schema:SubscribeAction ;
+    schema:entryPoint "ros+ws://172.16.1.108:9090/battery_state"^^xsd:anyURI ;
+    ros:messageType "sensor_msgs/BatteryState"
+  ], [
+    a schema:MoveAction ;
+    schema:entryPoint "ros+ws://172.16.1.108:9090/move_base"^^xsd:anyURI ;
+    ros:messageType "move_base_msgs/MoveBaseActionGoal"
+  ], [
+    a schema:SubscribeAction ;
+    schema:entryPoint "ros+ws://172.16.1.108:9090/audio_command"^^xsd:anyURI ; # /command topic
+    ros:messageType "project/command" # /command messages
+  ], [
+    a schema:SubscribeAction ;
+    schema:entryPoint "ros+ws://172.16.1.108:9090/obstacles"^^xsd:anyURI ; # /obstacles topic
+    ros:messageType "std_msgs/String" # /obstacles messages
+  ], [
+    a schema:SubscribeAction ;
+    schema:entryPoint "ros+ws://172.16.1.108:9090/signss"^^xsd:anyURI ; # /sign topic
+    ros:messageType "project/sign_info" # /sign messages
+  ], [
+    a ex:FeedbackAction ; # TODO generate text to be read out loud
+    schema:entryPoint "ros+ws://172.16.1.108:9090/audio_text"^^xsd:anyURI ; # /audio_text topic
+    ros:messageType "std_msgs/String" # /audio_text messages
+  ], [
+    a ex:ArmControlAction ; # TODO generate a arm controlling command
+    schema:entryPoint "ros+ws://172.16.1.108:9090/action"^^xsd:anyURI ; # /action topic
+    ros:messageType "arm_msgs/ArmControl" # /action messages
+  ] .
